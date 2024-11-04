@@ -22,14 +22,13 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
         std::cmatch cm;
         while (std::regex_search(ch, cm, reHelp) )
         {
-            // cout << res.size() << ' ' << res[1] << " >" << res[2] << '<'<<'\n';
             CHAR key = cm[1].str()[0];
             keys.insert(key);
             if (cm[2].matched) mValueKeys.insert(key);
             else mSwitchKeys.insert(key);
             ch = cm.suffix().first;
         }
-        mArgs = new CONST_C_STRING[argc - 1];
+        mArgs = new CONST_C_STRING[argc - start];
         mArgc = 0;
         std::set<CHAR> doneValues;
         for (INT32 n = start; mOk and n < argc; ++n)
@@ -79,20 +78,14 @@ void DocOpts::toCmd() const
 {
     if (mOk)
     {
+        CONST_C_STRING value;
         for (const auto c : mSwitchKeys)
-        {
             cout << "set _" << c << '=' << (isSet(c) ? '1' : '0' ) << '\n';
-        }
         for (const auto c : mValueKeys)
-        {
-            CONST_C_STRING value;
             cout << "set _" << c << '=' << (getValue(value, c) ? value : "") << '\n';
-        }
         cout << "set _args=";
         for (INT32 i = 0; i < mArgc; ++i)
-        {
             cout << mArgs[i] << ' ';
-        }
         cout << '\n';
     }    
 }

@@ -25,12 +25,13 @@ INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
                 std::istreambuf_iterator<char>());
             is.close();
             DocOpts opts;
-            if (opts.process(help.c_str(), argc - 1, &argv[1]))
+            if (opts.process(help.c_str(), argc, argv, 2))
             {
                 opts.toCmd();
                 ret = 0;
             }
         }
+        else is.close();
     }
     return ret;
 }
