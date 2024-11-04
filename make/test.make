@@ -24,9 +24,12 @@ TARGET = $(TARGETDIR)/test
 INCLUDES += -I../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
 LIBS +=
 LDDEPS +=
+ALL_LDFLAGS += $(LDFLAGS) -s
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 define PREBUILDCMDS
 endef
@@ -38,16 +41,14 @@ endef
 ifeq ($(config),ci)
 OBJDIR = ../build/linux/ci/ci/test
 DEFINES += -DNDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
-ALL_LDFLAGS += $(LDFLAGS) -s
 
-else ifeq ($(config),debug)
-OBJDIR = ../build/linux/debug/debug/test
-DEFINES += -DDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -std=c++17 -O3 -pedantic-errors -Wall
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++17 -O3 -pedantic-errors -Wall
-ALL_LDFLAGS += $(LDFLAGS)
+else ifeq ($(config),trace_on)
+OBJDIR = ../build/linux/trace_on/trace_on/test
+DEFINES += -DNDEBUG -DTRACE_ON
+
+else ifeq ($(config),trace_all)
+OBJDIR = ../build/linux/trace_all/trace_all/test
+DEFINES += -DNDEBUG -DTRACE_ALL
 
 endif
 

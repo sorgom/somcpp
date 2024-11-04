@@ -11,16 +11,23 @@ endif
 ifeq ($(config),ci)
   somcpp_config = ci
   test_config = ci
+  docopts_config = ci
 
-else ifeq ($(config),debug)
-  somcpp_config = debug
-  test_config = debug
+else ifeq ($(config),trace_on)
+  somcpp_config = trace_on
+  test_config = trace_on
+  docopts_config = trace_on
+
+else ifeq ($(config),trace_all)
+  somcpp_config = trace_all
+  test_config = trace_all
+  docopts_config = trace_all
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := somcpp test
+PROJECTS := somcpp test docopts
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -38,21 +45,30 @@ ifneq (,$(test_config))
 	@${MAKE} --no-print-directory -C . -f test.make config=$(test_config)
 endif
 
+docopts:
+ifneq (,$(docopts_config))
+	@echo "==== Building docopts ($(docopts_config)) ===="
+	@${MAKE} --no-print-directory -C . -f docopts.make config=$(docopts_config)
+endif
+
 clean:
 	@${MAKE} --no-print-directory -C . -f somcpp.make clean
 	@${MAKE} --no-print-directory -C . -f test.make clean
+	@${MAKE} --no-print-directory -C . -f docopts.make clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
 	@echo ""
 	@echo "CONFIGURATIONS:"
 	@echo "  ci"
-	@echo "  debug"
+	@echo "  trace_on"
+	@echo "  trace_all"
 	@echo ""
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
 	@echo "   somcpp"
 	@echo "   test"
+	@echo "   docopts"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

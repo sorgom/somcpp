@@ -8,12 +8,14 @@ buildoptions_gcc = '-std=c++17 -O3 -pedantic-errors -Wall'
 
 workspace 'somcpp'
 
-    configurations { 'ci', 'debug' }
+    configurations { 'ci', 'trace_on', 'trace_all' }
     language 'C++'
     targetdir '../build'
     objdir  '../build/%{_TARGET_OS}/%{cfg.name}'
     files { '../src/*.cpp' }
 
+    defines { 'NDEBUG' }
+    optimize 'Speed'
     includedirs { '../include' }
 
     filter { 'action:vs*' }
@@ -24,12 +26,12 @@ workspace 'somcpp'
         buildoptions { buildoptions_gcc }
 
     filter { 'configurations:ci' }
-        defines { 'NDEBUG' }
-        optimize 'Speed'
 
-    filter { 'configurations:debug' }
-        defines { 'DEBUG' }
-        symbols 'On'
+    filter { 'configurations:trace_on' }
+        defines { 'TRACE_ON' }
+
+    filter { 'configurations:trace_all' }
+        defines { 'TRACE_ALL' }
 
     project 'somcpp'
         kind 'staticlib'
@@ -37,3 +39,8 @@ workspace 'somcpp'
     project 'test'
         kind 'consoleapp'
         files { '../test/*.cpp' }
+
+    project 'docopts'
+        kind 'consoleapp'
+        files { '../docopts/*.cpp' }
+    

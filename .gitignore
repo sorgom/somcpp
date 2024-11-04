@@ -5,6 +5,8 @@ build
 *.vcxproj.*
 .vscode
 .vs
+*.make
+Makefile
 
 # Prerequisites
 *.d

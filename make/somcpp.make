@@ -24,9 +24,12 @@ TARGET = $(TARGETDIR)/libsomcpp.a
 INCLUDES += -I../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
 LIBS +=
 LDDEPS +=
+ALL_LDFLAGS += $(LDFLAGS) -s
 LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
 endef
@@ -38,16 +41,14 @@ endef
 ifeq ($(config),ci)
 OBJDIR = ../build/linux/ci/ci/somcpp
 DEFINES += -DNDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
-ALL_LDFLAGS += $(LDFLAGS) -s
 
-else ifeq ($(config),debug)
-OBJDIR = ../build/linux/debug/debug/somcpp
-DEFINES += -DDEBUG
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -std=c++17 -O3 -pedantic-errors -Wall
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++17 -O3 -pedantic-errors -Wall
-ALL_LDFLAGS += $(LDFLAGS)
+else ifeq ($(config),trace_on)
+OBJDIR = ../build/linux/trace_on/trace_on/somcpp
+DEFINES += -DNDEBUG -DTRACE_ON
+
+else ifeq ($(config),trace_all)
+OBJDIR = ../build/linux/trace_all/trace_all/somcpp
+DEFINES += -DNDEBUG -DTRACE_ALL
 
 endif
 
