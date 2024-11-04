@@ -12,7 +12,6 @@ workspace 'somcpp'
     language 'C++'
     targetdir '../build'
     objdir  '../build/%{_TARGET_OS}/%{cfg.name}'
-    files { '../src/*.cpp' }
 
     defines { 'NDEBUG' }
     optimize 'Speed'
@@ -35,12 +34,13 @@ workspace 'somcpp'
 
     project 'somcpp'
         kind 'staticlib'
+        files { '../src/*.cpp' }
   
     project 'test'
         kind 'consoleapp'
-        files { '../test/*.cpp' }
+        files { '../src/*.cpp', '../test/*.cpp' }
 
     project 'docopts'
         kind 'consoleapp'
-        files { '../docopts/*.cpp' }
+        files { '../src/docOpts.cpp', '../runtime/docOptsMain.cpp' }
     

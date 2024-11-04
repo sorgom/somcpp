@@ -79,17 +79,6 @@ void DocOpts::toCmd() const
 {
     if (mOk)
     {
-        cout << "set _opts=";
-        for (const auto c : mSwitchKeys)
-        {
-            cout << '_' << c << ' ';
-        }
-        for (const auto c : mValueKeys)
-        {
-            cout << '_' << c << ' ';
-        }
-        cout << '\n';
-
         for (const auto c : mSwitchKeys)
         {
             cout << "set _" << c << '=' << (isSet(c) ? '1' : '0' ) << '\n';

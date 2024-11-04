@@ -3,10 +3,8 @@
 #include <SOM/pyregex.h>
 #include <SOM/coding.h>
 
-#include <algorithm>
+// #include <algorithm>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <regex>
 
 using py::repl;
