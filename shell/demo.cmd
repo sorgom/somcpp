@@ -2,26 +2,30 @@
 SETLOCAL
 
 cd /d %~dp0
-set myDir=%cd%
 
 set docopts=..\build\docopts.exe
-set helpTxt=%myDir%\demo_help.txt
-set tmpCmd=%myDir%\tmp.cmd 
+set helpTxt=demo_help.txt
+set tmpCmd=tmp.cmd 
 
 if not exist %docopts% (
-    echo docopts.exe not found
+    echo docopts.exe not found. Please build it first.
     exit /b 1
 )
 
 %docopts% %helpTxt% %* > %tmpCmd%
-if %errorlevel% neq 0 exit /b 1
+if %errorlevel% NEQ 0 (
+    rm -f %tmpCmd%
+    echo Usage: %~nx0 [options] [args]
+    type %helpTxt%
+    exit /b 1
+)
 
 call %tmpCmd%
 rm -f %tmpCmd%
 
 if %_h%==1 (
     echo Usage: %~nx0 [options] [args]
-    cat %helpTxt%
+    type %helpTxt%
     exit /b 0
 )
 echo options: -c: %_c% -h: %_h% -t: %_t% -o: %_o%

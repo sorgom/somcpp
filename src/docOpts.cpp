@@ -78,15 +78,24 @@ void DocOpts::toCmd() const
 {
     if (mOk)
     {
-        CONST_C_STRING value;
+    #ifdef _WIN32
+        static const CONST_C_STRING prefix = "set _";
+        static const CONST_C_STRING argsQuote = "";
+    #else
+        static const CONST_C_STRING prefix = "export _";
+        static const CONST_C_STRING argsQuote = "\"";
+    #endif
         for (const auto c : mSwitchKeys)
-            cout << "set _" << c << '=' << (isSet(c) ? '1' : '0' ) << '\n';
+            cout << prefix << c << '=' << (isSet(c) ? '1' : '0' ) << '\n';
+
+        CONST_C_STRING value;
         for (const auto c : mValueKeys)
-            cout << "set _" << c << '=' << (getValue(value, c) ? value : "") << '\n';
-        cout << "set _args=";
+            cout << prefix << c << '=' << (getValue(value, c) ? value : "") << '\n';
+
+        cout << prefix << "args=" << argsQuote;
         for (INT32 i = 0; i < mArgc; ++i)
             cout << mArgs[i] << ' ';
-        cout << '\n';
+        cout << argsQuote << '\n';
     }    
 }
 
