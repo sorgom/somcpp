@@ -14,7 +14,7 @@ workspace 'somcpp'
     objdir  '../build/%{_TARGET_OS}/%{cfg.name}'
 
     defines { 'NDEBUG' }
-    optimize 'Speed'
+    optimize 'Size'
     includedirs { '../include' }
 
     filter { 'action:vs*' }
@@ -35,12 +35,15 @@ workspace 'somcpp'
     project 'somcpp'
         kind 'staticlib'
         files { '../src/*.cpp' }
-  
+
     project 'test'
         kind 'consoleapp'
         files { '../src/*.cpp', '../test/*.cpp' }
 
     project 'docopts'
         kind 'consoleapp'
-        files { '../src/docOpts.cpp', '../runtime/docOptsMain.cpp' }
-    
+        files { '../src/fio.cpp', '../src/docOpts.cpp', '../runtime/docOptsMain.cpp' }
+
+    project 'fglob'
+        kind 'consoleapp'
+        files { '../src/fglob.cpp', '../runtime/fglobMain.cpp' }

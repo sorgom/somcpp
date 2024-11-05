@@ -33,12 +33,10 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
         std::set<CHAR> doneValues;
         for (INT32 n = start; mOk and n < argc; ++n)
         {
-            // cout << "argv[" << n << "]: " << argv[n] << '\n';   
             if (std::regex_match(argv[n], cm, reOpt))
             {
                 for (auto c : cm[1].str())
                 {
-                    // cout << "c: " << c << '\n';
                     if (keys.find(c) == keys.end())
                     {
                         cerr << "unknown option: -" << c << '\n';
@@ -46,7 +44,6 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
                     }
                     else if (mValueKeys.find(c) != mValueKeys.end())
                     {
-                        // cout << "vKey: " << c << '\n';
                         if (doneValues.find(c) != doneValues.end())
                         {
                             cerr << "duplicate option: -" << c << '\n';
@@ -93,10 +90,9 @@ void DocOpts::toCmd() const
             cout << prefix << c << '=' << (getValue(value, c) ? value : "") << '\n';
 
         cout << prefix << "args=" << argsQuote;
-        for (INT32 i = 0; i < mArgc; ++i)
-            cout << mArgs[i] << ' ';
+        for (INT32 i = 0; i < mArgc; ++i) cout << mArgs[i] << ' ';
         cout << argsQuote << '\n';
-    }    
+    }
 }
 
 void DocOpts::reset()

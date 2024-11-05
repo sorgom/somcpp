@@ -1,7 +1,6 @@
-#include <SOM/BaseTypes.h>
-#include <SOM/TraceMacros.h>
-
 #include <SOM/docOpts.h>
+#include <SOM/fio.h>
+
 #include <filesystem>
 #include <fstream>
 
@@ -12,27 +11,17 @@ using std::cout;
 
 INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
 {
-    TRACE_FUNC_TIME()
-    TRACE_VAR(argc)
     INT32 ret = 1;
-    if (argc > 2 and std::filesystem::is_regular_file(argv[1]))
+    DocOpts opts;
+    std::string help;
+    if (
+        argc > 2 and
+        read(help, argv[1], false) and
+        opts.process(help.c_str(), argc, argv, 2)
+    )
     {
-        std::ifstream is(argv[1]);
-        if(is.good())
-        {
-            std::string help;
-            help.assign((std::istreambuf_iterator<char>(is)),
-                std::istreambuf_iterator<char>());
-            is.close();
-            DocOpts opts;
-            if (opts.process(help.c_str(), argc, argv, 2))
-            {
-                opts.toCmd();
-                ret = 0;
-            }
-        }
-        else is.close();
+        opts.toCmd();
+        ret = 0;
     }
     return ret;
 }
-
