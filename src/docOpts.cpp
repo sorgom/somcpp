@@ -20,70 +20,82 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
 
         CONST_C_STRING ch = help;
         std::cmatch cm;
-        while (std::regex_search(ch, cm, reHelp) )
+        while (mOk and std::regex_search(ch, cm, reHelp))
         {
             CHAR key = cm[1].str()[0];
+            if (keys.find(key) != keys.end())
+            {
+                cerr << "duplicate option definition: -" << key << '\n';
+                mOk = false;
+            }
             keys.insert(key);
             if (cm[2].matched) mValueKeys.insert(key);
             else mSwitchKeys.insert(key);
             ch = cm.suffix().first;
         }
-        mArgs = new CONST_C_STRING[argc - start];
-        mArgc = 0;
-        std::set<CHAR> doneValues;
-        for (INT32 n = start; mOk and n < argc; ++n)
+        if (mOk)
         {
-            if (std::regex_match(argv[n], cm, reOpt))
+            mArgs = new CONST_C_STRING[argc - start];
+            mArgc = 0;
+            std::set<CHAR> doneValues;
+            for (INT32 n = start; mOk and n < argc; ++n)
             {
-                for (auto c : cm[1].str())
+                if (std::regex_match(argv[n], cm, reOpt))
                 {
-                    if (keys.find(c) == keys.end())
+                    for (auto c : cm[1].str())
                     {
-                        cerr << "unknown option: -" << c << '\n';
-                        mOk = false;
-                    }
-                    else if (mValueKeys.find(c) != mValueKeys.end())
-                    {
-                        if (doneValues.find(c) != doneValues.end())
+                        if (keys.find(c) == keys.end())
                         {
-                            cerr << "duplicate option: -" << c << '\n';
+                            cerr << "unknown option: -" << c << '\n';
                             mOk = false;
                         }
-                        else if (n < argc - 1)
+                        else if (mValueKeys.find(c) != mValueKeys.end())
                         {
-                            doneValues.insert(c);
-                            mValues[c] = argv[n + 1];
-                            ++n;
+                            if (doneValues.find(c) != doneValues.end())
+                            {
+                                cerr << "duplicate option usage: -" << c << '\n';
+                                mOk = false;
+                            }
+                            else if (n < argc - 1)
+                            {
+                                doneValues.insert(c);
+                                mValues[c] = argv[n + 1];
+                                ++n;
+                            }
+                            else
+                            {
+                                cerr << "no value for option: -" << c << '\n';
+                                mOk = false;
+                            }
                         }
-                        else
-                        {
-                            cerr << "no value for option: -" << c << '\n';
-                            mOk = false;
-                        }
+                        else mSwitches.insert(c);
                     }
-                    else mSwitches.insert(c);
                 }
+                else mArgs[mArgc++] = argv[n];
             }
-            else mArgs[mArgc++] = argv[n];
         }
         if (not mOk) reset();
     }
     return mOk;
 }
 
-void DocOpts::toCmd() const
+void DocOpts::toShell() const
 {
     if (mOk)
     {
     #ifdef _WIN32
         static const CONST_C_STRING prefix = "set _";
         static const CONST_C_STRING argsQuote = "";
+        static const CONST_C_STRING cTrue  = "1==1";
+        static const CONST_C_STRING cFalse = "0==1";
     #else
         static const CONST_C_STRING prefix = "export _";
         static const CONST_C_STRING argsQuote = "\"";
+        static const CONST_C_STRING cTrue  = "true";
+        static const CONST_C_STRING cFalse = "false";
     #endif
         for (const auto c : mSwitchKeys)
-            cout << prefix << c << '=' << (isSet(c) ? '1' : '0' ) << '\n';
+            cout << prefix << c << '=' << (isSet(c) ? cTrue : cFalse ) << '\n';
 
         CONST_C_STRING value;
         for (const auto c : mValueKeys)

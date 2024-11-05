@@ -19,7 +19,7 @@ public:
     void reset();
     CONST_C_STRING* args() const { return mArgs; }
     INT32 argc() const { return mArgc; }
-    void toCmd() const;
+    void toShell() const;
     const std::set<CHAR>& activeSwitches() const { return mSwitches; }
 private:
     std::map<CHAR, CONST_C_STRING> mValues;

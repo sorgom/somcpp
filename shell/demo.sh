@@ -4,7 +4,12 @@ cd $(dirname $0)
 
 docopts=../build/docopts
 optsTxt=demo_options.txt
-tmpSh=tmp.sh 
+tmpSh=../build/tmp.sh
+
+if [ ! -f $docopts ]; then
+    echo "$docopts not found. Please build it first."
+    exit 1
+fi
 
 function help
 {
@@ -14,16 +19,11 @@ function help
     exit 0
 }
 
-if [ ! -f $docopts ]; then
-    echo "$docopts not found. Please build it first."
-    exit 1
-fi
-
-$docopts $optsTxt $@ > $tmpSh || help
+$docopts $optsTxt $@ > $tmpSh || exit 1
 source $tmpSh
 rm -f $tmpSh
 
-if [[ $_h -eq 1 ]]; then help; fi    
+if $_h; then help; fi
 
-echo options: -c: $_c -h: $_h -t: $_t -o: $_o
+echo options: -c: $_c -t: $_t -o: $_o
 echo args: $_args

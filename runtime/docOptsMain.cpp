@@ -20,7 +20,7 @@ INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
         opts.process(help.c_str(), argc, argv, 2)
     )
     {
-        opts.toCmd();
+        opts.toShell();
         ret = 0;
     }
     return ret;

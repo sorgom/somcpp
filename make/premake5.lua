@@ -32,14 +32,6 @@ workspace 'somcpp'
     filter { 'configurations:trace_all' }
         defines { 'TRACE_ALL' }
 
-    project 'somcpp'
-        kind 'staticlib'
-        files { '../src/*.cpp' }
-
-    project 'test'
-        kind 'consoleapp'
-        files { '../src/*.cpp', '../test/*.cpp' }
-
     project 'docopts'
         kind 'consoleapp'
         files { '../src/fio.cpp', '../src/docOpts.cpp', '../runtime/docOptsMain.cpp' }
