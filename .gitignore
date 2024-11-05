@@ -1,3 +1,13 @@
+# local
+build
+*.sln
+*.vcxproj
+*.vcxproj.*
+.vscode
+.vs
+*.make
+Makefile
+
 # Prerequisites
 *.d
 
