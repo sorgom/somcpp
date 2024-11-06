@@ -8,6 +8,7 @@ build
 *.make
 Makefile
 tmp.*
+tmp
 
 # Prerequisites
 *.d

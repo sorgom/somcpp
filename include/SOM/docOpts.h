@@ -3,6 +3,7 @@
 #define DOCOPTS_H
 
 #include <SOM/BaseTypes.h>
+#include <SOM/coding.h>
 #include <map>
 #include <set>
 class DocOpts
@@ -30,5 +31,7 @@ private:
     CONST_C_STRING* mArgs = nullptr;
     INT32 mArgc = 0;
     void rmArgs();
+
+    NOCOPY(DocOpts)
 };
 #endif // _H
