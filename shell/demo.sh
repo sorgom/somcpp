@@ -21,7 +21,6 @@ function help
 
 $docopts $optsTxt $@ > $tmpSh || exit 1
 source $tmpSh
-rm -f $tmpSh
 
 if $_h; then help; fi
 

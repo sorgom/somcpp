@@ -1,2 +1,6 @@
 # somcpp
-commonly used c++ code
+
+- commonly used c++ code
+- build sources for
+    - docopts
+    - fglob
