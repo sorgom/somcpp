@@ -1,5 +1,5 @@
 options:
 -c  generate coverage
--h  this help
 -o  <file> output to file
 -t  write todo
+-h  this help

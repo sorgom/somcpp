@@ -6,43 +6,39 @@ cd /d %~dp0
 set docopts=..\build\docopts.exe
 set fglob=..\build\fglob.exe
 set helpTxt=demo_options.txt
-set tmpCmd=tmp.cmd
-
-if not exist %docopts% (
-    echo %docopts% not found. Please build it first.
-    goto end
-)
+set tmpCmd=..\build\tmp.cmd
 
 echo.
 echo - docopts
+if not exist %docopts% (
+    echo first build %docopts% to proceed
+    exit /b 1
+)
+
 call %docopts% %helpTxt% %* > %tmpCmd%
-if %errorlevel% NEQ 0 goto help
+if %errorlevel% NEQ 0 exit /b %errorlevel%
 
 call %tmpCmd%
 
-if %_h%==1 goto help
-echo options: -c: %_c% -h: %_h% -t: %_t% -o: %_o%
-echo args: %_args%
-
-if not exist %fglob% (
-    echo %fglob% not found. Please build it first.
-    goto end
+if %_h% (
+    echo Usage: %~nx0 [options] [args]
+    type %helpTxt%
+    exit /b 0
 )
+echo options: -c: %_c% -t: %_t% -o: %_o%
+echo args: %_args%
 
 echo.
 echo - fglob
+if not exist %fglob% (
+    echo first build %fglob% to proceed
+    exit /b 1
+)
+
 call %fglob% %_args% > %tmpCmd%
 call %tmpCmd%
 
 echo args:
 for %%a in (%_args%) do echo %%a
-goto end
-
-:help
-echo Usage: %~nx0 [options] [args]
-type %helpTxt%
-
-:end
-if exist %tmpCmd% del %tmpCmd%
 
 ENDLOCAL

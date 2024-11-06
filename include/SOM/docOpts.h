@@ -3,6 +3,7 @@
 #define DOCOPTS_H
 
 #include <SOM/BaseTypes.h>
+#include <SOM/coding.h>
 #include <map>
 #include <set>
 class DocOpts
@@ -19,7 +20,7 @@ public:
     void reset();
     CONST_C_STRING* args() const { return mArgs; }
     INT32 argc() const { return mArgc; }
-    void toCmd() const;
+    void toShell() const;
     const std::set<CHAR>& activeSwitches() const { return mSwitches; }
 private:
     std::map<CHAR, CONST_C_STRING> mValues;
@@ -30,5 +31,7 @@ private:
     CONST_C_STRING* mArgs = nullptr;
     INT32 mArgc = 0;
     void rmArgs();
+
+    NOCOPY(DocOpts)
 };
 #endif // _H

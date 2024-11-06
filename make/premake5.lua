@@ -1,5 +1,5 @@
 --  ============================================================
---  premake5 build rules for covbr2html
+--  premake5 build rules
 --  ============================================================
 
 buildoptions_vs = '/std:c++17 /MP /W4 /wd4100 /wd4103'
@@ -31,14 +31,6 @@ workspace 'somcpp'
 
     filter { 'configurations:trace_all' }
         defines { 'TRACE_ALL' }
-
-    project 'somcpp'
-        kind 'staticlib'
-        files { '../src/*.cpp' }
-
-    project 'test'
-        kind 'consoleapp'
-        files { '../src/*.cpp', '../test/*.cpp' }
 
     project 'docopts'
         kind 'consoleapp'
