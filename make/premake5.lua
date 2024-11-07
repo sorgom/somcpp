@@ -39,3 +39,7 @@ workspace 'somcpp'
     project 'fglob'
         kind 'consoleapp'
         files { '../src/fglob.cpp', '../runtime/fglobMain.cpp' }
+
+    project 'lib'
+        kind 'staticlib'
+        files { '../src/*.cpp' }
