@@ -10,72 +10,69 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
 {
     reset();
 
-    if (argc > start)
+    mOk = true;
+    static const regex reHelp("(?:^|\n) *-([a-zA-Z])( +<\\w+)?");
+    static const regex reOpt("^-([a-zA-Z]*)$");
+
+    std::set<CHAR>keys;
+
+    CONST_C_STRING ch = help;
+    std::cmatch cm;
+
+    while (mOk and std::regex_search(ch, cm, reHelp))
     {
-        mOk = true;
-        static const regex reHelp("(?:^|\n) *-([a-zA-Z])( +<\\w+)?");
-        static const regex reOpt("^-([a-zA-Z]*)$");
-
-        std::set<CHAR>keys;
-
-        CONST_C_STRING ch = help;
-        std::cmatch cm;
-        while (mOk and std::regex_search(ch, cm, reHelp))
+        CHAR key = cm[1].str()[0];
+        if (keys.find(key) != keys.end())
         {
-            CHAR key = cm[1].str()[0];
-            if (keys.find(key) != keys.end())
-            {
-                cerr << "duplicate option definition: -" << key << '\n';
-                mOk = false;
-            }
-            keys.insert(key);
-            if (cm[2].matched) mValueKeys.insert(key);
-            else mSwitchKeys.insert(key);
-            ch = cm.suffix().first;
+            cerr << "duplicate option definition: -" << key << '\n';
+            mOk = false;
         }
-        if (mOk)
+        keys.insert(key);
+        if (cm[2].matched) mValueKeys.insert(key);
+        else mSwitchKeys.insert(key);
+        ch = cm.suffix().first;
+    }
+    if (mOk and argc > start)
+    {
+        mArgs = new CONST_C_STRING[argc - start];
+        std::set<CHAR> doneValues;
+        for (INT32 n = start; mOk and n < argc; ++n)
         {
-            mArgs = new CONST_C_STRING[argc - start];
-            mArgc = 0;
-            std::set<CHAR> doneValues;
-            for (INT32 n = start; mOk and n < argc; ++n)
+            if (std::regex_match(argv[n], cm, reOpt))
             {
-                if (std::regex_match(argv[n], cm, reOpt))
+                for (auto c : cm[1].str())
                 {
-                    for (auto c : cm[1].str())
+                    if (keys.find(c) == keys.end())
                     {
-                        if (keys.find(c) == keys.end())
+                        cerr << "unknown option: -" << c << '\n';
+                        mOk = false;
+                    }
+                    else if (mValueKeys.find(c) != mValueKeys.end())
+                    {
+                        if (doneValues.find(c) != doneValues.end())
                         {
-                            cerr << "unknown option: -" << c << '\n';
+                            cerr << "duplicate option usage: -" << c << '\n';
                             mOk = false;
                         }
-                        else if (mValueKeys.find(c) != mValueKeys.end())
+                        else if (n < argc - 1)
                         {
-                            if (doneValues.find(c) != doneValues.end())
-                            {
-                                cerr << "duplicate option usage: -" << c << '\n';
-                                mOk = false;
-                            }
-                            else if (n < argc - 1)
-                            {
-                                doneValues.insert(c);
-                                mValues[c] = argv[n + 1];
-                                ++n;
-                            }
-                            else
-                            {
-                                cerr << "no value for option: -" << c << '\n';
-                                mOk = false;
-                            }
+                            doneValues.insert(c);
+                            mValues[c] = argv[n + 1];
+                            ++n;
                         }
-                        else mSwitches.insert(c);
+                        else
+                        {
+                            cerr << "no value for option: -" << c << '\n';
+                            mOk = false;
+                        }
                     }
+                    else mSwitches.insert(c);
                 }
-                else mArgs[mArgc++] = argv[n];
             }
+            else mArgs[mArgc++] = argv[n];
         }
-        if (not mOk) reset();
     }
+    if (not mOk) reset();
     return mOk;
 }
 
