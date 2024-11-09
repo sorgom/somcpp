@@ -25,7 +25,7 @@ if %_h% (
     type %helpTxt%
     exit /b 0
 )
-echo options: -c: %_c% -t: %_t% -o: %_o%
+echo options: -c: %_c% -t: %_t% -H %_Hu% -o: %_o%
 echo args: %_args%
 
 echo.

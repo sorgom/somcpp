@@ -34,7 +34,7 @@ workspace 'somcpp'
 
     project 'docopts'
         kind 'consoleapp'
-        files { '../src/fio.cpp', '../src/docOpts.cpp', '../runtime/docOptsMain.cpp' }
+        files { '../src/fio.cpp', '../src/docopts.cpp', '../runtime/docoptsMain.cpp' }
 
     project 'fglob'
         kind 'consoleapp'

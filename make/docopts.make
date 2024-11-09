@@ -62,11 +62,11 @@ endif
 GENERATED :=
 OBJECTS :=
 
-GENERATED += $(OBJDIR)/docOpts.o
-GENERATED += $(OBJDIR)/docOptsMain.o
+GENERATED += $(OBJDIR)/docopts.o
+GENERATED += $(OBJDIR)/docoptsMain.o
 GENERATED += $(OBJDIR)/fio.o
-OBJECTS += $(OBJDIR)/docOpts.o
-OBJECTS += $(OBJDIR)/docOptsMain.o
+OBJECTS += $(OBJDIR)/docopts.o
+OBJECTS += $(OBJDIR)/docoptsMain.o
 OBJECTS += $(OBJDIR)/fio.o
 
 # Rules
@@ -131,10 +131,10 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/docOptsMain.o: ../runtime/docOptsMain.cpp
+$(OBJDIR)/docoptsMain.o: ../runtime/docoptsMain.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/docOpts.o: ../src/docOpts.cpp
+$(OBJDIR)/docopts.o: ../src/docopts.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/fio.o: ../src/fio.cpp

@@ -24,5 +24,5 @@ source $tmpSh
 
 if $_h; then help; fi
 
-echo options: -c: $_c -t: $_t -o: $_o
+echo options: -c: $_c -t: $_t -H: $_H -o: $_o
 echo args: $_args

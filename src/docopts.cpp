@@ -4,6 +4,7 @@
 #include <set>
 #include <iostream>
 #include <ciso646>
+#include <cctype>
 using std::regex, std::string, std::cout, std::cerr;
 
 bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
@@ -85,14 +86,26 @@ void DocOpts::toShell() const
         static const CONST_C_STRING argsQuote = "";
         static const CONST_C_STRING cTrue  = "1==1";
         static const CONST_C_STRING cFalse = "0==1";
+
+        for (const auto c : mSwitchKeys)
+        {
+            cout << prefix << c;
+            //  win cmd is not case sensitive
+            //  so:
+            // -x will set %_x%
+            // -X will set %_Xu%
+            if (std::isupper(c)) cout << 'u';
+            cout  << '=' << (isSet(c) ? cTrue : cFalse ) << '\n';
+        }
+
     #else
         static const CONST_C_STRING prefix = "export _";
         static const CONST_C_STRING argsQuote = "\"";
         static const CONST_C_STRING cTrue  = "true";
         static const CONST_C_STRING cFalse = "false";
-    #endif
         for (const auto c : mSwitchKeys)
             cout << prefix << c << '=' << (isSet(c) ? cTrue : cFalse ) << '\n';
+    #endif
 
         CONST_C_STRING value;
         for (const auto c : mValueKeys)
