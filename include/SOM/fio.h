@@ -21,13 +21,4 @@ inline bool open(std::ofstream& os, const std::filesystem::path&& file, std::ios
     return open(os, file, m);
 }
 
-//  deprecated
-bool checkos(const std::ofstream& os, CONST_C_STRING file);
-
-//  deprecated
-inline bool checkos(const std::ofstream& os, const std::string& file)
-{
-    return checkos(os, file.c_str());
-}
-
 #endif // _H

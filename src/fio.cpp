@@ -35,17 +35,3 @@ bool open(std::ofstream& os, const std::filesystem::path& file, std::ios_base::o
     }
     return ok;
 }
-
-bool checkos(const std::ofstream& os, const CONST_C_STRING file)
-{
-    const bool ok = os.good();
-    if (ok)
-    {
-        TRACE("-> " << file)
-    }
-    else
-    {
-        std::cerr << "write error: " << file << '\n';
-    }
-    return ok;
-}
