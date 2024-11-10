@@ -1,4 +1,4 @@
-#include <SOM/docOpts.h>
+#include <SOM/docopts.h>
 #include <regex>
 #include <string>
 #include <set>
