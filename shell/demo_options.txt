@@ -2,4 +2,5 @@ options:
 -c  generate coverage
 -o  <file> output to file
 -t  write todo
+-H  create HTML
 -h  this help

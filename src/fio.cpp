@@ -20,8 +20,9 @@ bool read(std::string& target, const CONST_C_STRING file, const bool err)
     return ok;
 }
 
-bool checkos(const std::ofstream& os, const CONST_C_STRING file)
+bool open(std::ofstream& os, const std::filesystem::path& file, std::ios_base::openmode m)
 {
+    os.open(file, m);
     const bool ok = os.good();
     if (ok)
     {
@@ -30,6 +31,7 @@ bool checkos(const std::ofstream& os, const CONST_C_STRING file)
     else
     {
         std::cerr << "write error: " << file << '\n';
+        os.close();
     }
     return ok;
 }

@@ -1,4 +1,4 @@
-#include <SOM/docOpts.h>
+#include <SOM/docopts.h>
 #include <SOM/fio.h>
 
 #include <filesystem>
@@ -15,7 +15,7 @@ INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
     DocOpts opts;
     std::string help;
     if (
-        argc > 2 and
+        argc > 1 and
         read(help, argv[1], false) and
         opts.process(help.c_str(), argc, argv, 2)
     )
