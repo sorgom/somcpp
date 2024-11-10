@@ -2,5 +2,5 @@
 
 - commonly used c++ code
 - build sources for
-    - docopts
+    - [docopts](docopts.md)
     - fglob
