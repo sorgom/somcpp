@@ -21,11 +21,13 @@ struct T_Trace
     inline T_Trace(const char* section):
         mSection(section),
         mStart(std::chrono::steady_clock::now())
-    {}
+    {
+        TRACE(">> " << section)
+    }
     inline ~T_Trace()
     {
         const _TracePoint end = std::chrono::steady_clock::now();
-        TRACE('[' << std::setw(5) << std::chrono::duration_cast<std::chrono::milliseconds>(end - mStart).count() << "] " << mSection);
+        TRACE("<< [" << std::setw(5) << std::chrono::duration_cast<std::chrono::milliseconds>(end - mStart).count() << "] " << mSection);
     }
 };
 struct F_Trace
