@@ -26,7 +26,7 @@ bool open(std::ofstream& os, const std::filesystem::path& file, std::ios_base::o
     const bool ok = os.good();
     if (ok)
     {
-        TRACE("-> " << file)
+        TRACE("-> " << file.string())
     }
     else
     {
