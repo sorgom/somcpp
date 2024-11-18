@@ -11,7 +11,7 @@ workspace 'somcpp'
     configurations { 'ci', 'trace_on', 'trace_all' }
     language 'C++'
     targetdir '../build'
-    objdir  '../build/%{_TARGET_OS}/%{cfg.name}'
+    objdir  '../build/%{_TARGET_OS}'
 
     defines { 'NDEBUG' }
     optimize 'Size'
