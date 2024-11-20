@@ -30,7 +30,7 @@ bool open(std::ofstream& os, const std::filesystem::path& file, std::ios_base::o
     }
     else
     {
-        std::cerr << "write error: " << file << '\n';
+        std::cerr << "write error: " << file.string() << '\n';
         os.close();
     }
     return ok;
