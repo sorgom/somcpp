@@ -12,19 +12,19 @@
 
 #include <SOM/BaseTypes.h>
 
-class I_GlobProcessor
+class I_FglobProcessor
 {
 public:
-    virtual void process(CONST_C_STRING item) = 0;
+    virtual void process(CONST_C_STRING fpath) = 0;
 };
 
 //!  glob files
 //!  @param item file, or directory with file glob pattern
-//!  @param proc I_GlobProcessor
+//!  @param proc I_FglobProcessor
 #ifdef _WIN32
-void fglob(CONST_C_STRING item, I_GlobProcessor& proc);
+void fglob(CONST_C_STRING item, I_FglobProcessor& proc);
 #else
-inline void fglob(CONST_C_STRING item, I_GlobProcessor& proc)
+inline void fglob(CONST_C_STRING item, I_FglobProcessor& proc)
 {
     proc.process(item);
 }

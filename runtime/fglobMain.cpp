@@ -2,7 +2,7 @@
 #include <iostream>
 using std::cout;
 
-class GlobOut : public I_GlobProcessor
+class GlobOut : public I_FglobProcessor
 {
 public:
     inline GlobOut()
