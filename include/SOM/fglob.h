@@ -11,11 +11,18 @@
 #define FGLOB_H
 
 #include <SOM/BaseTypes.h>
+#include <string>
 
+<<<<<<< Updated upstream
 class I_GlobProcessor
 {
 public:
     virtual void process(CONST_C_STRING item) = 0;
+=======
+struct I_FglobProcessor
+{
+    virtual void process(const std::string& fpath) = 0;
+>>>>>>> Stashed changes
 };
 
 //!  glob files

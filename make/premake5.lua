@@ -12,6 +12,7 @@ workspace 'somcpp'
     language 'C++'
     targetdir '../build'
     objdir  '../build/%{_TARGET_OS}'
+    kind 'consoleapp'
 
     defines { 'NDEBUG' }
     optimize 'Size'
@@ -33,12 +34,14 @@ workspace 'somcpp'
         defines { 'TRACE_ALL' }
 
     project 'docopts'
-        kind 'consoleapp'
         files { '../src/fio.cpp', '../src/docopts.cpp', '../runtime/docoptsMain.cpp' }
 
     project 'fglob'
-        kind 'consoleapp'
         files { '../src/fglob.cpp', '../runtime/fglobMain.cpp' }
+
+    project 'lab'
+        files { '../lab/*.cpp', '../src/*.cpp' }
+        includedirs { '../lab' }
 
     project 'lib'
         kind 'staticlib'

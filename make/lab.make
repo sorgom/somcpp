@@ -20,8 +20,8 @@ endif
 
 RESCOMP = windres
 TARGETDIR = ../build
-TARGET = $(TARGETDIR)/fglob
-INCLUDES += -I../include
+TARGET = $(TARGETDIR)/lab
+INCLUDES += -I../include -I../lab
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -Os -std=c++17 -O3 -pedantic-errors -Wall
@@ -39,15 +39,15 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),ci)
-OBJDIR = ../build/linux/ci/fglob
+OBJDIR = ../build/linux/ci/lab
 DEFINES += -DNDEBUG
 
 else ifeq ($(config),trace_on)
-OBJDIR = ../build/linux/trace_on/fglob
+OBJDIR = ../build/linux/trace_on/lab
 DEFINES += -DNDEBUG -DTRACE_ON
 
 else ifeq ($(config),trace_all)
-OBJDIR = ../build/linux/trace_all/fglob
+OBJDIR = ../build/linux/trace_all/lab
 DEFINES += -DNDEBUG -DTRACE_ALL
 
 endif
@@ -62,10 +62,14 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/docopts.o
 GENERATED += $(OBJDIR)/fglob.o
-GENERATED += $(OBJDIR)/fglobMain.o
+GENERATED += $(OBJDIR)/fio.o
+GENERATED += $(OBJDIR)/labMain.o
+OBJECTS += $(OBJDIR)/docopts.o
 OBJECTS += $(OBJDIR)/fglob.o
-OBJECTS += $(OBJDIR)/fglobMain.o
+OBJECTS += $(OBJDIR)/fio.o
+OBJECTS += $(OBJDIR)/labMain.o
 
 # Rules
 # #############################################
@@ -75,7 +79,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking fglob
+	@echo Linking lab
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -96,7 +100,7 @@ else
 endif
 
 clean:
-	@echo Cleaning fglob
+	@echo Cleaning lab
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -129,10 +133,16 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/fglobMain.o: ../runtime/fglobMain.cpp
+$(OBJDIR)/labMain.o: ../lab/labMain.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/docopts.o: ../src/docopts.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/fglob.o: ../src/fglob.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/fio.o: ../src/fio.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
