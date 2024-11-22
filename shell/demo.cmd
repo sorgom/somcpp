@@ -1,6 +1,7 @@
 @ECHO OFF
 SETLOCAL
 
+set cDir=%CD%
 cd /d %~dp0
 
 set docopts=..\build\docopts.exe
@@ -28,6 +29,7 @@ if %_h% (
 echo options: -c: %_c% -t: %_t% -H %_Hu% -o: %_o%
 echo args: %_args%
 
+cd %cDir%
 echo.
 echo - fglob
 if not exist %fglob% (
