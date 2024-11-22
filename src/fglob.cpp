@@ -12,7 +12,7 @@ using fp = std::filesystem::path;
 using std::regex, std::regex_replace, std::regex_match;
 using std::string;
 
-void fglob(const CONST_C_STRING item, I_GlobProcessor& proc)
+void fglob(const string& item, I_FglobProcessor& proc)
 {
     //  any posix system has expanded globbing
     if (std::filesystem::is_regular_file(item))

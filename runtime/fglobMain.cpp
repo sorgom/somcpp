@@ -2,7 +2,7 @@
 #include <iostream>
 using std::cout;
 
-class GlobOut : public I_GlobProcessor
+class GlobOut : public I_FglobProcessor
 {
 public:
     inline GlobOut()
@@ -21,7 +21,7 @@ public:
         cout << '\n';
     }
 
-    void process(CONST_C_STRING item) override
+    void process(const std::string& item) override
     {
         cout << item << ' ';
     }

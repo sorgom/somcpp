@@ -13,25 +13,19 @@
 #include <SOM/BaseTypes.h>
 #include <string>
 
-<<<<<<< Updated upstream
-class I_GlobProcessor
+class I_FglobProcessor
 {
 public:
-    virtual void process(CONST_C_STRING item) = 0;
-=======
-struct I_FglobProcessor
-{
     virtual void process(const std::string& fpath) = 0;
->>>>>>> Stashed changes
 };
 
 //!  glob files
 //!  @param item file, or directory with file glob pattern
 //!  @param proc I_GlobProcessor
 #ifdef _WIN32
-void fglob(CONST_C_STRING item, I_GlobProcessor& proc);
+void fglob(const std::string& item, I_FglobProcessor& proc);
 #else
-inline void fglob(CONST_C_STRING item, I_GlobProcessor& proc)
+inline void fglob(const std::string& item, I_FglobProcessor& proc)
 {
     proc.process(item);
 }
