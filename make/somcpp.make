@@ -20,7 +20,7 @@ endif
 
 RESCOMP = windres
 TARGETDIR = ../build
-TARGET = $(TARGETDIR)/liblib.a
+TARGET = $(TARGETDIR)/libsomcpp.a
 INCLUDES += -I../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -39,15 +39,15 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),ci)
-OBJDIR = ../build/linux/ci/lib
+OBJDIR = ../build/linux/ci/somcpp
 DEFINES += -DNDEBUG
 
 else ifeq ($(config),trace_on)
-OBJDIR = ../build/linux/trace_on/lib
+OBJDIR = ../build/linux/trace_on/somcpp
 DEFINES += -DNDEBUG -DTRACE_ON
 
 else ifeq ($(config),trace_all)
-OBJDIR = ../build/linux/trace_all/lib
+OBJDIR = ../build/linux/trace_all/somcpp
 DEFINES += -DNDEBUG -DTRACE_ALL
 
 endif
@@ -81,7 +81,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking lib
+	@echo Linking somcpp
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -102,7 +102,7 @@ else
 endif
 
 clean:
-	@echo Cleaning lib
+	@echo Cleaning somcpp
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)

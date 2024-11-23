@@ -12,25 +12,25 @@ ifeq ($(config),ci)
   docopts_config = ci
   fglob_config = ci
   glob_config = ci
-  lib_config = ci
+  somcpp_config = ci
 
 else ifeq ($(config),trace_on)
   docopts_config = trace_on
   fglob_config = trace_on
   glob_config = trace_on
-  lib_config = trace_on
+  somcpp_config = trace_on
 
 else ifeq ($(config),trace_all)
   docopts_config = trace_all
   fglob_config = trace_all
   glob_config = trace_all
-  lib_config = trace_all
+  somcpp_config = trace_all
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := docopts fglob glob lib
+PROJECTS := docopts fglob glob somcpp
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -54,17 +54,17 @@ ifneq (,$(glob_config))
 	@${MAKE} --no-print-directory -C . -f glob.make config=$(glob_config)
 endif
 
-lib:
-ifneq (,$(lib_config))
-	@echo "==== Building lib ($(lib_config)) ===="
-	@${MAKE} --no-print-directory -C . -f lib.make config=$(lib_config)
+somcpp:
+ifneq (,$(somcpp_config))
+	@echo "==== Building somcpp ($(somcpp_config)) ===="
+	@${MAKE} --no-print-directory -C . -f somcpp.make config=$(somcpp_config)
 endif
 
 clean:
 	@${MAKE} --no-print-directory -C . -f docopts.make clean
 	@${MAKE} --no-print-directory -C . -f fglob.make clean
 	@${MAKE} --no-print-directory -C . -f glob.make clean
-	@${MAKE} --no-print-directory -C . -f lib.make clean
+	@${MAKE} --no-print-directory -C . -f somcpp.make clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
@@ -80,6 +80,6 @@ help:
 	@echo "   docopts"
 	@echo "   fglob"
 	@echo "   glob"
-	@echo "   lib"
+	@echo "   somcpp"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

@@ -46,6 +46,6 @@ workspace 'somcpp'
         -- files { '../lab/*.cpp', '../src/*.cpp' }
         -- includedirs { '../lab' }
 
-    project 'lib'
+    project 'somcpp'
         kind 'staticlib'
         files { '../src/*.cpp' }
