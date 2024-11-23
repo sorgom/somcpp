@@ -144,6 +144,13 @@ void Glob::swap()
 void Glob::glob(const string& fpath)
 {
     TRACE_FUNC()
+    if (not isGlob(fpath))
+    {
+        if (filter(fpath)) proc.process(fpath);
+        return;
+    }
+    getSrc().clear();
+    getTrg().clear();
     strVec tokens;
     tokenize(tokens, fpath);
     size_t n = 0;
