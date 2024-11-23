@@ -11,20 +11,21 @@
 #define FGLOB_H
 
 #include <SOM/BaseTypes.h>
+#include <string>
 
 class I_FglobProcessor
 {
 public:
-    virtual void process(CONST_C_STRING fpath) = 0;
+    virtual void process(const std::string& fpath) = 0;
 };
 
 //!  glob files
 //!  @param item file, or directory with file glob pattern
-//!  @param proc I_FglobProcessor
+//!  @param proc I_GlobProcessor
 #ifdef _WIN32
-void fglob(CONST_C_STRING item, I_FglobProcessor& proc);
+void fglob(const std::string& item, I_FglobProcessor& proc);
 #else
-inline void fglob(CONST_C_STRING item, I_FglobProcessor& proc)
+inline void fglob(const std::string& item, I_FglobProcessor& proc)
 {
     proc.process(item);
 }

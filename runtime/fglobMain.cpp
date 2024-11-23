@@ -21,7 +21,7 @@ public:
         cout << '\n';
     }
 
-    void process(CONST_C_STRING item) override
+    void process(const std::string& item) override
     {
         cout << item << ' ';
     }
