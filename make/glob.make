@@ -62,13 +62,13 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/Glob.o
 GENERATED += $(OBJDIR)/GlobProcessors.o
 GENERATED += $(OBJDIR)/docopts.o
-GENERATED += $(OBJDIR)/glob.o
 GENERATED += $(OBJDIR)/globMain.o
+OBJECTS += $(OBJDIR)/Glob.o
 OBJECTS += $(OBJDIR)/GlobProcessors.o
 OBJECTS += $(OBJDIR)/docopts.o
-OBJECTS += $(OBJDIR)/glob.o
 OBJECTS += $(OBJDIR)/globMain.o
 
 # Rules
@@ -136,13 +136,13 @@ endif
 $(OBJDIR)/globMain.o: ../runtime/globMain.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/Glob.o: ../src/Glob.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/GlobProcessors.o: ../src/GlobProcessors.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/docopts.o: ../src/docopts.cpp
-	@echo "$(notdir $<)"
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/glob.o: ../src/glob.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
