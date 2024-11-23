@@ -11,26 +11,26 @@ endif
 ifeq ($(config),ci)
   docopts_config = ci
   fglob_config = ci
-  lab_config = ci
+  glob_config = ci
   lib_config = ci
 
 else ifeq ($(config),trace_on)
   docopts_config = trace_on
   fglob_config = trace_on
-  lab_config = trace_on
+  glob_config = trace_on
   lib_config = trace_on
 
 else ifeq ($(config),trace_all)
   docopts_config = trace_all
   fglob_config = trace_all
-  lab_config = trace_all
+  glob_config = trace_all
   lib_config = trace_all
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := docopts fglob lab lib
+PROJECTS := docopts fglob glob lib
 
 .PHONY: all clean help $(PROJECTS) 
 
@@ -48,10 +48,10 @@ ifneq (,$(fglob_config))
 	@${MAKE} --no-print-directory -C . -f fglob.make config=$(fglob_config)
 endif
 
-lab:
-ifneq (,$(lab_config))
-	@echo "==== Building lab ($(lab_config)) ===="
-	@${MAKE} --no-print-directory -C . -f lab.make config=$(lab_config)
+glob:
+ifneq (,$(glob_config))
+	@echo "==== Building glob ($(glob_config)) ===="
+	@${MAKE} --no-print-directory -C . -f glob.make config=$(glob_config)
 endif
 
 lib:
@@ -63,7 +63,7 @@ endif
 clean:
 	@${MAKE} --no-print-directory -C . -f docopts.make clean
 	@${MAKE} --no-print-directory -C . -f fglob.make clean
-	@${MAKE} --no-print-directory -C . -f lab.make clean
+	@${MAKE} --no-print-directory -C . -f glob.make clean
 	@${MAKE} --no-print-directory -C . -f lib.make clean
 
 help:
@@ -79,7 +79,7 @@ help:
 	@echo "   clean"
 	@echo "   docopts"
 	@echo "   fglob"
-	@echo "   lab"
+	@echo "   glob"
 	@echo "   lib"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

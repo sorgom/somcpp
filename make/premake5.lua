@@ -39,9 +39,12 @@ workspace 'somcpp'
     project 'fglob'
         files { '../src/fglob.cpp', '../runtime/fglobMain.cpp' }
 
-    project 'lab'
-        files { '../lab/*.cpp', '../src/*.cpp' }
-        includedirs { '../lab' }
+    project 'glob'
+        files { '../src/glob.cpp', '../src/GlobProcessors.cpp', '../src/docopts.cpp', '../runtime/globMain.cpp' }
+
+        -- project 'lab'
+        -- files { '../lab/*.cpp', '../src/*.cpp' }
+        -- includedirs { '../lab' }
 
     project 'lib'
         kind 'staticlib'

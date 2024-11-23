@@ -3,11 +3,12 @@ SETLOCAL
 
 set cDir=%CD%
 cd /d %~dp0
+set helpTxt=%CD%\demo_options.txt
 
-set docopts=..\build\docopts.exe
-set fglob=..\build\fglob.exe
-set helpTxt=demo_options.txt
-set tmpCmd=..\build\tmp.cmd
+cd ..
+set docopts=%CD%\build\docopts.exe
+set glob=%CD%\build\glob.exe
+set tmpCmd=%CD%\build\tmp.cmd
 
 echo.
 echo - docopts
@@ -16,7 +17,7 @@ if not exist %docopts% (
     exit /b 1
 )
 
-call %docopts% %helpTxt% %* > %tmpCmd%
+%docopts% %helpTxt% %* > %tmpCmd%
 if %errorlevel% NEQ 0 exit /b %errorlevel%
 
 call %tmpCmd%
@@ -31,16 +32,15 @@ echo args: %_args%
 
 cd %cDir%
 echo.
-echo - fglob
-if not exist %fglob% (
-    echo first build %fglob% to proceed
+echo - glob
+if not exist %glob% (
+    echo first build %glob% to proceed
     exit /b 1
 )
 
-call %fglob% %_args% > %tmpCmd%
-call %tmpCmd%
+%glob% -p "<X>" -x "echo <X>" %_args% > %tmpCmd%
 
 echo args:
-for %%a in (%_args%) do echo %%a
+call %tmpCmd%
 
 ENDLOCAL

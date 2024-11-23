@@ -62,9 +62,13 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/Glob.o
+GENERATED += $(OBJDIR)/GlobProcessors.o
 GENERATED += $(OBJDIR)/docopts.o
 GENERATED += $(OBJDIR)/fglob.o
 GENERATED += $(OBJDIR)/fio.o
+OBJECTS += $(OBJDIR)/Glob.o
+OBJECTS += $(OBJDIR)/GlobProcessors.o
 OBJECTS += $(OBJDIR)/docopts.o
 OBJECTS += $(OBJDIR)/fglob.o
 OBJECTS += $(OBJDIR)/fio.o
@@ -131,6 +135,12 @@ endif
 # File Rules
 # #############################################
 
+$(OBJDIR)/Glob.o: ../src/Glob.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/GlobProcessors.o: ../src/GlobProcessors.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/docopts.o: ../src/docopts.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"

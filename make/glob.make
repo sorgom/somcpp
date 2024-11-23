@@ -20,8 +20,8 @@ endif
 
 RESCOMP = windres
 TARGETDIR = ../build
-TARGET = $(TARGETDIR)/lab
-INCLUDES += -I../include -I../lab
+TARGET = $(TARGETDIR)/glob
+INCLUDES += -I../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -Os -std=c++17 -O3 -pedantic-errors -Wall
@@ -39,15 +39,15 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),ci)
-OBJDIR = ../build/linux/ci/lab
+OBJDIR = ../build/linux/ci/glob
 DEFINES += -DNDEBUG
 
 else ifeq ($(config),trace_on)
-OBJDIR = ../build/linux/trace_on/lab
+OBJDIR = ../build/linux/trace_on/glob
 DEFINES += -DNDEBUG -DTRACE_ON
 
 else ifeq ($(config),trace_all)
-OBJDIR = ../build/linux/trace_all/lab
+OBJDIR = ../build/linux/trace_all/glob
 DEFINES += -DNDEBUG -DTRACE_ALL
 
 endif
@@ -62,14 +62,14 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/GlobProcessors.o
 GENERATED += $(OBJDIR)/docopts.o
-GENERATED += $(OBJDIR)/fglob.o
-GENERATED += $(OBJDIR)/fio.o
-GENERATED += $(OBJDIR)/labMain.o
+GENERATED += $(OBJDIR)/glob.o
+GENERATED += $(OBJDIR)/globMain.o
+OBJECTS += $(OBJDIR)/GlobProcessors.o
 OBJECTS += $(OBJDIR)/docopts.o
-OBJECTS += $(OBJDIR)/fglob.o
-OBJECTS += $(OBJDIR)/fio.o
-OBJECTS += $(OBJDIR)/labMain.o
+OBJECTS += $(OBJDIR)/glob.o
+OBJECTS += $(OBJDIR)/globMain.o
 
 # Rules
 # #############################################
@@ -79,7 +79,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking lab
+	@echo Linking glob
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -100,7 +100,7 @@ else
 endif
 
 clean:
-	@echo Cleaning lab
+	@echo Cleaning glob
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -133,16 +133,16 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/labMain.o: ../lab/labMain.cpp
+$(OBJDIR)/globMain.o: ../runtime/globMain.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/GlobProcessors.o: ../src/GlobProcessors.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/docopts.o: ../src/docopts.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/fglob.o: ../src/fglob.cpp
-	@echo "$(notdir $<)"
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/fio.o: ../src/fio.cpp
+$(OBJDIR)/glob.o: ../src/glob.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
