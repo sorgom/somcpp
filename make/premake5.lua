@@ -15,7 +15,7 @@ workspace 'somcpp'
     kind 'consoleapp'
 
     defines { 'NDEBUG' }
-    optimize 'Size'
+    optimize 'Speed'
     includedirs { '../include' }
 
     filter { 'action:vs*' }

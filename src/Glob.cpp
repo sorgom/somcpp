@@ -41,11 +41,9 @@ void Glob::pathVec::add(const string& s)
     }
 }
 
-Glob::pathVec& Glob::pathVec::operator << (const std::filesystem::directory_entry& e)
+void Glob::pathVec::add(const std::filesystem::directory_entry& e)
 {
     push_back(e.path().string());
-    // TRACE_VAR(e.path().string())
-    return *this;
 }
 
 bool Glob::isGlob(const string& token)
@@ -56,15 +54,24 @@ bool Glob::isGlob(const string& token)
 
 void Glob::tokenize(strVec& v, const string& path)
 {
+    TRACE_FUNC()
     static const regex rxTok("[/\\\\]");
-    string s = path;
-    std::smatch sm;
-    while (regex_search(s, sm, rxTok))
+    //  regex applied on string&& deleted in Windows
+    //  therefore operate const char* instead
+    const CONST_C_STRING c = path.c_str();
+    std::cmatch cm;
+    size_t pos = 0;
+    while (regex_search(c + pos, cm, rxTok))
     {
-        v.push_back(s.substr(0, sm.position()));
-        s = s.substr(sm.position() + 1);
+        TRACE_VAR(pos)
+        const size_t p = cm.position();
+        v.push_back(path.substr(pos, p));
+        pos += (p + 1);
     }
-    if (not s.empty()) v.push_back(s);
+    if (pos < path.size())
+    {
+        v.push_back(path.substr(pos));
+    }
 }
 
 void Glob::getAll()
@@ -78,7 +85,7 @@ void Glob::getAll()
         {
             for (const auto& e : directory_iterator(fspath(path)))
             {
-                trg << e;
+                trg.add(e);
             }
         }
     }
@@ -98,8 +105,8 @@ void Glob::getDirs(const pathVec& src, const bool recursive)
             {
                 if (is_directory(e))
                 {
-                    trg << e;
-                    if (recursive) next << e;
+                    trg.add(e);
+                    if (recursive) next.add(e);
                 }
             }
         }
@@ -128,7 +135,7 @@ void Glob::getGlob(const string& token, const bool dirs)
                     regex_match(e.path().filename().string(), re)
                 )
                 {
-                    trg << e;
+                    trg.add(e);
                 }
             }
         }

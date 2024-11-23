@@ -30,7 +30,7 @@ private:
     struct pathVec : strVec
     {
         void add(const std::string& s);
-        pathVec& operator << (const std::filesystem::directory_entry& e);
+        void add(const std::filesystem::directory_entry& e);
     };
 
     using ffunc = std::function<bool(const std::string&)>;
