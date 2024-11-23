@@ -35,9 +35,9 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
     }
     if (mOk and argc > start)
     {
-        mArgs = new CONST_C_STRING[argc - start];
         std::set<CHAR> doneValues;
-        for (INT32 n = start; mOk and n < argc; ++n)
+        INT32 n = start;
+        while (mOk and n < argc)
         {
             if (std::regex_match(argv[n], cm, reOpt))
             {
@@ -69,8 +69,14 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
                     }
                     else mSwitches.insert(c);
                 }
+                ++n;
             }
-            else mArgs[mArgc++] = argv[n];
+            else
+            {
+                mArgs = argv + n;
+                mArgc = argc - n;
+                break;
+            }
         }
     }
     if (not mOk) reset();
@@ -119,7 +125,8 @@ void DocOpts::toShell() const
 
 void DocOpts::reset()
 {
-    rmArgs();
+    mArgs = nullptr;
+    mArgc = 0;
     mValues.clear();
     mSwitches.clear();
     mValueKeys.clear();
@@ -136,14 +143,4 @@ bool DocOpts::getValue(CONST_C_STRING& value, CHAR key) const
         value = it->second;
     }
     return ok;
-}
-
-void DocOpts::rmArgs()
-{
-    if (mArgs != nullptr)
-    {
-        delete[] mArgs;
-        mArgs = nullptr;
-    }
-    mArgc = 0;
 }
