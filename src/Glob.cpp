@@ -3,7 +3,10 @@
 
 #define TRACE_ME
 #include <SOM/TraceMacros.h>
+
+#include <iostream>
 #include <regex>
+
 using
     py::repl,
     std::filesystem::exists,
@@ -129,11 +132,24 @@ void Glob::process(const fspath& path, const size_t pos)
     }
     else
     {
-        const fspath p { path.empty() ? fspath(item) : path / item };
-        if (exists(p))
+        try
         {
-            if (isLast) callProc(p);
-            else if (is_directory(p)) process(p, pos + 1);
+            const fspath p =
+                (not path.empty()) ?
+                    path / item :
+                    item == "~" ? fspath(getHome()) :
+                    fspath(item)
+            ;
+            TRACE_VAR(p)
+            if (exists(p))
+            {
+                if (isLast) callProc(p);
+                else if (is_directory(p)) process(p, pos + 1);
+            }
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
         }
     }
 }
@@ -141,7 +157,7 @@ void Glob::process(const fspath& path, const size_t pos)
 void Glob::glob(const string& fpath)
 {
     TRACE_FUNC()
-    if (not isGlob(fpath))
+    if (not todo(fpath))
     {
         const fspath p { fpath };
         if (exists(p)) callProc(p);
@@ -151,4 +167,21 @@ void Glob::glob(const string& fpath)
     tokenize(mItems, fpath);
     if (mItems.empty()) return;
     process(fspath(), 0);
+}
+
+CONST_C_STRING Glob::getHome()
+{
+    TRACE_FUNC()
+    #ifdef _WIN32
+        #define C_HOME "USERPROFILE"
+    #else
+        #define C_HOME "HOME"
+    #endif
+
+    const CONST_C_STRING home = getenv(C_HOME);
+    if (home == nullptr)
+    {
+        throw std::invalid_argument("error: env " C_HOME " not set");
+    }
+    return home;
 }

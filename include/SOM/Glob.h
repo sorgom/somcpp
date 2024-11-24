@@ -27,7 +27,10 @@ private:
     using fspath = std::filesystem::path;
     static bool isGlob(const std::string& token);
     static void tokenize(strVec& tokens, const std::string& fpath);
-
+    inline static bool todo(const std::string& fpath)
+    {
+        return isGlob(fpath) or fpath[0] == '~';
+    }
     const bool mFiles;
     const bool mDirs;
     I_GlobProcessor& mProc;
@@ -38,6 +41,7 @@ private:
     void procGlob(const fspath& path, size_t pos, bool isLast=false);
     void procAll(const fspath& path);
     void callProc(const fspath& path);
+    static CONST_C_STRING getHome();
 
     NOCOPY(Glob)
 };
