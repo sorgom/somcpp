@@ -4,10 +4,8 @@
 
 #include <SOM/BaseTypes.h>
 #include <SOM/coding.h>
-#include <SOM/fglob.h>
 
 #include <filesystem>
-#include <functional>
 #include <string>
 #include <vector>
 
@@ -18,7 +16,6 @@ public:
     virtual ~I_GlobProcessor() = default;
 };
 
-
 class Glob
 {
 public:
@@ -27,31 +24,20 @@ public:
 
 private:
     using strVec = std::vector<std::string>;
-    struct pathVec : strVec
-    {
-        void add(const std::string& s);
-        void add(const std::filesystem::directory_entry& e);
-    };
-
-    using ffunc = std::function<bool(const std::string&)>;
-    static const ffunc fd;
-    static const ffunc ff;
-    static const ffunc fx;
+    using fspath = std::filesystem::path;
     static bool isGlob(const std::string& token);
     static void tokenize(strVec& tokens, const std::string& fpath);
 
-    const bool onlyDirs;
-    I_GlobProcessor& proc;
-    const ffunc filter;
-    pathVec buffs[2];
-    UINT8 pSrc = 0;
-    UINT8 pTrg = 1;
-    inline pathVec& getSrc() { return buffs[pSrc]; }
-    inline pathVec& getTrg() { return buffs[pTrg]; }
-    void getAll();
-    void getDirs(const pathVec& src, bool recursive=false);
-    void getGlob(const std::string& token, bool dirs=false);
-    void swap();
+    const bool mFiles;
+    const bool mDirs;
+    I_GlobProcessor& mProc;
+    strVec mItems;
+    void process(const fspath& path, size_t pos);
+    inline void process(const fspath&& path, size_t pos) { process(path, pos); }
+    void procDirs(const fspath& path, size_t pos, bool isLast=false, bool recursive=false);
+    void procGlob(const fspath& path, size_t pos, bool isLast=false);
+    void procAll(const fspath& path);
+    void callProc(const fspath& path);
 
     NOCOPY(Glob)
 };

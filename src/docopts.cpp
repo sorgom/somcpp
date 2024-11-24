@@ -3,8 +3,6 @@
 #include <string>
 #include <set>
 #include <iostream>
-#include <ciso646>
-#include <cctype>
 using std::regex, std::string, std::cout, std::cerr;
 
 bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
@@ -12,7 +10,7 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
     reset();
 
     mOk = true;
-    static const regex reHelp("(?:^|\n) *-([a-zA-Z])( +<\\w+)?");
+    static const regex reHelp("(?:^|\n) *-([a-zA-Z])( +<\\w+[\\w ]*>)?");
     static const regex reOpt("^-([a-zA-Z]*)$");
 
     std::set<CHAR>keys;

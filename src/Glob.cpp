@@ -1,10 +1,9 @@
 #include <SOM/Glob.h>
 #include <SOM/pyregex.h>
+
+#define TRACE_ME
 #include <SOM/TraceMacros.h>
-
-#include <algorithm>
 #include <regex>
-
 using
     py::repl,
     std::filesystem::exists,
@@ -20,31 +19,10 @@ using
 using fspath = std::filesystem::path;
 
 Glob::Glob(I_GlobProcessor& proc, const bool onlyFiles, const bool onlyDirs):
-    onlyDirs(onlyDirs),
-    proc(proc),
-    filter(onlyFiles ? ff : onlyDirs ? fd : fx)
+    mFiles(onlyFiles or (not onlyDirs)),
+    mDirs(onlyDirs or (not onlyFiles)),
+    mProc(proc)
 {}
-
-const Glob::ffunc Glob::fd = [](const string& s) { return is_directory(s); };
-const Glob::ffunc Glob::ff = [](const string& s) { return is_regular_file(s); };
-const Glob::ffunc Glob::fx = [](const string& s) { return exists(s); };
-
-void Glob::pathVec::add(const string& s)
-{
-    if (empty()) push_back(s);
-    else
-    {
-        for (auto& str: *this)
-        {
-            str += '/' + s;
-        }
-    }
-}
-
-void Glob::pathVec::add(const std::filesystem::directory_entry& e)
-{
-    push_back(e.path().string());
-}
 
 bool Glob::isGlob(const string& token)
 {
@@ -55,97 +33,109 @@ bool Glob::isGlob(const string& token)
 void Glob::tokenize(strVec& v, const string& path)
 {
     TRACE_FUNC()
-    static const regex rxTok("[/\\\\]");
-    //  regex applied on string&& deleted in Windows
-    //  therefore operate const char* instead
-    const CONST_C_STRING c = path.c_str();
-    std::cmatch cm;
-    size_t pos = 0;
-    while (regex_search(c + pos, cm, rxTok))
+    static const regex rxTok("([^/\\\\]+)[/\\\\]?");
+    static const regex rxTop("^[/\\\\]");
+    std::smatch sm;
+    if (regex_search(path, sm, rxTop))
     {
-        TRACE_VAR(pos)
-        const size_t p = cm.position();
-        v.push_back(path.substr(pos, p));
-        pos += (p + 1);
+        v.push_back(sm[0]);
     }
-    if (pos < path.size())
+    string::const_iterator ps(path.cbegin());
+    while (regex_search(ps, path.cend(), sm, rxTok))
     {
-        v.push_back(path.substr(pos));
+        v.push_back(sm[1]);
+        ps = sm.suffix().first;
     }
 }
 
-void Glob::getAll()
+void Glob::callProc(const fspath& path)
 {
     TRACE_FUNC()
-    const pathVec& src = getSrc();
-    pathVec& trg = getTrg();
-    for (const auto& path: src)
+    if (
+        (mFiles and is_regular_file(path)) or
+        (mDirs and is_directory(path))
+    )
     {
-        if (is_directory(path))
-        {
-            for (const auto& e : directory_iterator(fspath(path)))
-            {
-                trg.add(e);
-            }
-        }
+        mProc.process(path.string());
     }
 }
 
-void Glob::getDirs(const pathVec& src, const bool recursive)
+void Glob::procDirs(const fspath& path, const size_t pos, const bool isLast, const bool recursive)
 {
     TRACE_FUNC()
-    TRACE_VAR(recursive)
-    pathVec next;
-    pathVec& trg = getTrg();
-    for (const auto& path: src)
+    for (const auto& e : directory_iterator(path))
     {
-        if (is_directory(path))
-        {
-            for (const auto& e : directory_iterator(fspath(path)))
-            {
-                if (is_directory(e))
-                {
-                    trg.add(e);
-                    if (recursive) next.add(e);
-                }
-            }
-        }
+        const auto& ep = e.path();
+        if (isLast) callProc(ep);
+        else if (is_directory(e)) process(ep, pos + 1);
+
+        if (recursive and is_directory(e)) procDirs(ep, pos, isLast, recursive);
     }
-    if (recursive and not next.empty()) getDirs(next, true);
 }
 
-void Glob::getGlob(const string& token, const bool dirs)
+void Glob::procAll(const fspath& path)
 {
     TRACE_FUNC()
-    TRACE_VAR(dirs)
+    for (const auto& e : directory_iterator(path))
+    {
+        callProc(e.path());
+    }
+}
+
+void Glob::procGlob(const fspath& path, size_t pos, bool isLast)
+{
+    TRACE_FUNC()
     static const regex reAst("[*]");
     static const regex reDot("[.]");
     static const regex reQue("[?]");
-    const regex re(repl(reQue, ".", repl(reAst, ".*", repl(reDot, "\\.", token))));
-    const pathVec& src = getSrc();
-    pathVec& trg = getTrg();
-    for (const auto& path: src)
+    const string& item = mItems[pos];
+    const regex re(repl(reQue, ".", repl(reAst, ".*", repl(reDot, "\\.", item))));
+    for (const auto& e : directory_iterator(path))
     {
-        if (is_directory(path))
+        const auto& ep = e.path();
+        if (regex_match(ep.filename().string(), re))
         {
-            for (const auto& e : directory_iterator(fspath(path)))
-            {
-                if (
-                    ((not dirs) or is_directory(e)) and
-                    regex_match(e.path().filename().string(), re)
-                )
-                {
-                    trg.add(e);
-                }
-            }
+            if (isLast) callProc(ep);
+            else if (is_directory(e)) process(ep, pos + 1);
         }
     }
 }
 
-void Glob::swap()
+void Glob::process(const fspath& path, const size_t pos)
 {
-    std::swap(pSrc, pTrg);
-    getTrg().clear();
+    TRACE_FUNC()
+    const bool isLast = (pos == mItems.size() - 1);
+    const string& item = mItems[pos];
+
+    //  path for directory globbing
+    static const fspath pCurr(".");
+    const fspath& gp = path.empty() ? pCurr : path;
+
+    if (item == "**")
+    {
+        if (mDirs or (not isLast))
+            procDirs(gp, pos, isLast, true);
+    }
+    else if (item == "*")
+    {
+        if (isLast)
+            procAll(gp);
+        else
+            procDirs(gp, pos);
+    }
+    else if (isGlob(item))
+    {
+        procGlob(gp, pos, isLast);
+    }
+    else
+    {
+        const fspath p { path.empty() ? fspath(item) : path / item };
+        if (exists(p))
+        {
+            if (isLast) callProc(p);
+            else if (is_directory(p)) process(p, pos + 1);
+        }
+    }
 }
 
 void Glob::glob(const string& fpath)
@@ -153,46 +143,12 @@ void Glob::glob(const string& fpath)
     TRACE_FUNC()
     if (not isGlob(fpath))
     {
-        if (filter(fpath)) proc.process(fpath);
+        const fspath p { fpath };
+        if (exists(p)) callProc(p);
         return;
     }
-    getSrc().clear();
-    getTrg().clear();
-    strVec tokens;
-    tokenize(tokens, fpath);
-    size_t n = 0;
-    const size_t sz = tokens.size();
-    for (const auto& token : tokens)
-    {
-        ++n;
-        TRACE_VAR(sz)
-        TRACE_VAR(n)
-        TRACE_VAR(token)
-        if (token == "**")
-        {
-            getDirs(getSrc(), true);
-            swap();
-        }
-        else if (token == "*")
-        {
-            if (onlyDirs or n < sz)
-                getDirs(getSrc(), false);
-            else
-                getAll();
-            swap();
-        }
-        else if (isGlob(token))
-        {
-            getGlob(token, onlyDirs or n < sz);
-            swap();
-        }
-        else
-        {
-            getSrc().add(token);
-        }
-    }
-    for (const string& s: getSrc())
-    {
-        if (filter(s)) proc.process(s);
-    }
+    mItems.clear();
+    tokenize(mItems, fpath);
+    if (mItems.empty()) return;
+    process(fspath(), 0);
 }

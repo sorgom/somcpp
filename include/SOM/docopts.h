@@ -17,15 +17,15 @@ public:
         return mSwitches.find(key) != mSwitches.end();
     }
     void reset();
-    const CONST_C_STRING* args() const { return mArgs; }
-    INT32 argc() const { return mArgc; }
+    inline const CONST_C_STRING* args() const { return mArgs; }
+    inline INT32 argc() const { return mArgc; }
     void toShell() const;
-    const std::set<CHAR>& activeSwitches() const { return mSwitches; }
+    inline const std::set<CHAR>& activeSwitches() const { return mSwitches; }
 private:
     std::map<CHAR, CONST_C_STRING> mValues;
     std::set<CHAR> mSwitches;
-    std::set<CHAR>mValueKeys;
-    std::set<CHAR>mSwitchKeys;
+    std::set<CHAR> mValueKeys;
+    std::set<CHAR> mSwitchKeys;
     bool mOk = false;
     const CONST_C_STRING* mArgs = nullptr;
     INT32 mArgc = 0;
