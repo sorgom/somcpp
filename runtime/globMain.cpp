@@ -51,10 +51,11 @@ INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
                 proc = std::make_unique<GlobArgs>();
             }
             Glob glob(*proc, opts.isSet('f'), opts.isSet('d'));
-            for (auto i = 0; i < opts.argc(); ++i)
-            {
-                glob.glob(opts.args()[i]);
-            }
+            glob.glob(opts.argc(), opts.args());
+            // for (auto i = 0; i < opts.argc(); ++i)
+            // {
+            //     glob.glob(opts.args()[i]);
+            // }
         }
     }
     return ret;

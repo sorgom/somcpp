@@ -24,8 +24,8 @@ TARGET = $(TARGETDIR)/glob
 INCLUDES += -I../include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -Os -std=c++17 -O3 -pedantic-errors -Wall
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -Os -std=c++17 -O3 -pedantic-errors -Wall
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O3 -std=c++17 -O3 -pedantic-errors -Wall
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
 LIBS +=
 LDDEPS +=
@@ -49,6 +49,14 @@ DEFINES += -DNDEBUG -DTRACE_ON
 else ifeq ($(config),trace_all)
 OBJDIR = ../build/linux/trace_all/glob
 DEFINES += -DNDEBUG -DTRACE_ALL
+
+else ifeq ($(config),glob_linux)
+OBJDIR = ../build/linux/glob_linux/glob
+DEFINES += -DNDEBUG -DGLOB_LINUX
+
+else ifeq ($(config),glob_linux_trace_all)
+OBJDIR = ../build/linux/glob_linux_trace_all/glob
+DEFINES += -DNDEBUG -DGLOB_LINUX -DTRACE_ALL
 
 endif
 

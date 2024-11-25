@@ -16,7 +16,7 @@
 ### regexes
 value option
 ```
-^ *-[a-zA-Z] +<\w+
+^ *-[a-zA-Z] +<\w[\w ]*>
 ```
 simple switch
 ```
