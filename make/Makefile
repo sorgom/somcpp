@@ -26,6 +26,18 @@ else ifeq ($(config),trace_all)
   glob_config = trace_all
   somcpp_config = trace_all
 
+else ifeq ($(config),glob_linux)
+  docopts_config = glob_linux
+  fglob_config = glob_linux
+  glob_config = glob_linux
+  somcpp_config = glob_linux
+
+else ifeq ($(config),glob_linux_trace_all)
+  docopts_config = glob_linux_trace_all
+  fglob_config = glob_linux_trace_all
+  glob_config = glob_linux_trace_all
+  somcpp_config = glob_linux_trace_all
+
 else
   $(error "invalid configuration $(config)")
 endif
@@ -73,6 +85,8 @@ help:
 	@echo "  ci"
 	@echo "  trace_on"
 	@echo "  trace_all"
+	@echo "  glob_linux"
+	@echo "  glob_linux_trace_all"
 	@echo ""
 	@echo "TARGETS:"
 	@echo "   all (default)"

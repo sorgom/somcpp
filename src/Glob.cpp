@@ -19,37 +19,7 @@ using
     std::string,
     std::vector
 ;
-using fspath = std::filesystem::path;
-
-Glob::Glob(I_GlobProcessor& proc, const bool onlyFiles, const bool onlyDirs):
-    mFiles(onlyFiles or (not onlyDirs)),
-    mDirs(onlyDirs or (not onlyFiles)),
-    mProc(proc)
-{}
-
-bool Glob::isGlob(const string& token)
-{
-    static const regex reGlob("\\[.*\\]|[?*]");
-    return regex_search(token, reGlob);
-}
-
-void Glob::tokenize(strVec& v, const string& path)
-{
-    TRACE_FUNC()
-    static const regex rxTok("([^/\\\\]+)[/\\\\]?");
-    static const regex rxTop("^[/\\\\]");
-    std::smatch sm;
-    if (regex_search(path, sm, rxTop))
-    {
-        v.push_back(sm[0]);
-    }
-    string::const_iterator ps(path.cbegin());
-    while (regex_search(ps, path.cend(), sm, rxTok))
-    {
-        v.push_back(sm[1]);
-        ps = sm.suffix().first;
-    }
-}
+// using fspath = std::filesystem::path;
 
 void Glob::callProc(const fspath& path)
 {
@@ -60,6 +30,49 @@ void Glob::callProc(const fspath& path)
     )
     {
         mProc.process(path.string());
+    }
+}
+
+Glob::Glob(I_GlobProcessor& proc, const bool onlyFiles, const bool onlyDirs):
+    mFiles(onlyFiles or (not onlyDirs)),
+    mDirs(onlyDirs or (not onlyFiles)),
+    mProc(proc)
+{}
+
+bool Glob::isGlob(const CONST_C_STRING token)
+{
+    static const regex reGlob("\\[.*\\]|[?*]");
+    return regex_search(token, reGlob);
+}
+
+void Glob::glob(const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
+{
+    TRACE_FUNC_TIME()
+    for (auto i = start; i < argc; ++i)
+    {
+        glob(argv[i]);
+    }
+}
+
+#if defined(_WIN32) or defined(GLOB_LINUX)
+
+void Glob::tokenize(strVec& v, const CONST_C_STRING path)
+{
+    TRACE_FUNC()
+    static const regex rxTok("([^/\\\\]+)[/\\\\]?");
+    static const regex rxTop("^[/\\\\]");
+    v.clear();
+    std::cmatch sm;
+    if (regex_search(path, sm, rxTop))
+    {
+        v.push_back(sm[0]);
+    }
+    // string::const_iterator ps(path.cbegin());
+    CONST_C_STRING p = path;
+    while (regex_search(p, sm, rxTok))
+    {
+        v.emplace_back(sm[1]);
+        p = sm.suffix().first;
     }
 }
 
@@ -91,8 +104,9 @@ void Glob::procGlob(const fspath& path, size_t pos, bool isLast)
     static const regex reAst("[*]");
     static const regex reDot("[.]");
     static const regex reQue("[?]");
+    static const regex reNeg("\\[!(.+?)\\]");
     const string& item = mItems[pos];
-    const regex re(repl(reQue, ".", repl(reAst, ".*", repl(reDot, "\\.", item))));
+    const regex re(repl(reNeg, "[^$1]", repl(reQue, ".", repl(reAst, ".*", repl(reDot, "\\.", item)))));
     for (const auto& e : directory_iterator(path))
     {
         const auto& ep = e.path();
@@ -126,7 +140,7 @@ void Glob::process(const fspath& path, const size_t pos)
         else
             procDirs(gp, pos);
     }
-    else if (isGlob(item))
+    else if (isGlob(item.c_str()))
     {
         procGlob(gp, pos, isLast);
     }
@@ -154,20 +168,19 @@ void Glob::process(const fspath& path, const size_t pos)
     }
 }
 
-void Glob::glob(const string& fpath)
+void Glob::glob(const CONST_C_STRING fpath)
 {
     TRACE_FUNC()
     if (not todo(fpath))
     {
-        const fspath p { fpath };
-        if (exists(p)) callProc(p);
+        callProc(fspath(fpath));
         return;
     }
-    mItems.clear();
     tokenize(mItems, fpath);
     if (mItems.empty()) return;
     process(fspath(), 0);
 }
+
 
 CONST_C_STRING Glob::getHome()
 {
@@ -185,3 +198,4 @@ CONST_C_STRING Glob::getHome()
     }
     return home;
 }
+#endif // _WIN32

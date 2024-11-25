@@ -1,4 +1,6 @@
 #include <SOM/GlobProcessors.h>
+
+#define TRACE_ME
 #include <SOM/TraceMacros.h>
 
 #include <iostream>
@@ -30,7 +32,6 @@ GlobArgs::GlobArgs()
 
 GlobArgs::~GlobArgs()
 {
-    TRACE_FUNC()
 #ifndef _WIN32
     cout << '"';
 #endif

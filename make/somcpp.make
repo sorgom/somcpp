@@ -50,6 +50,14 @@ else ifeq ($(config),trace_all)
 OBJDIR = ../build/linux/trace_all/somcpp
 DEFINES += -DNDEBUG -DTRACE_ALL
 
+else ifeq ($(config),glob_linux)
+OBJDIR = ../build/linux/glob_linux/somcpp
+DEFINES += -DNDEBUG -DGLOB_LINUX
+
+else ifeq ($(config),glob_linux_trace_all)
+OBJDIR = ../build/linux/glob_linux_trace_all/somcpp
+DEFINES += -DNDEBUG -DGLOB_LINUX -DTRACE_ALL
+
 endif
 
 # Per File Configurations
