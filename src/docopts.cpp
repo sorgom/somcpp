@@ -1,11 +1,15 @@
 #include <SOM/docopts.h>
+#include <SOM/pyregex.h>
 #include <regex>
 #include <string>
 #include <set>
 #include <iostream>
-using std::regex, std::string, std::cout, std::cerr;
+using
+    py::repl,
+    std::regex, std::string, std::cout, std::cerr;
+#include <filesystem>
 
-bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
+bool DocOpts::process(const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
 {
     reset();
 
@@ -15,7 +19,7 @@ bool DocOpts::process(const CONST_C_STRING help, const INT32 argc, const CONST_C
 
     std::set<CHAR>keys;
 
-    CONST_C_STRING ch = help;
+    CONST_C_STRING ch = mHelp;
     std::cmatch cm;
 
     while (mOk and std::regex_search(ch, cm, reHelp))
@@ -119,6 +123,13 @@ void DocOpts::toShell() const
         for (INT32 i = 0; i < mArgc; ++i) cout << mArgs[i] << ' ';
         cout << argsQuote << '\n';
     }
+}
+
+void DocOpts::help(CONST_C_STRING argv0) const
+{
+    static const regex reHelp("ARGV0");
+
+    cout << repl(reHelp, std::filesystem::path(argv0).filename().string().c_str(), mHelp) << '\n';
 }
 
 void DocOpts::reset()

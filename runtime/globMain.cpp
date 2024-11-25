@@ -6,7 +6,8 @@
 #include <iostream>
 #include <memory>
 
-const CONST_C_STRING cOpts =
+const CONST_C_STRING cHelp =
+    "usage: ARGV0 [options] args\n"
     "options:\n"
     "-x  <command> command to execute with each arg\n"
     "-p  <placeholder> placeholder for command\n"
@@ -16,24 +17,15 @@ const CONST_C_STRING cOpts =
     "-h  this help\n"
 ;
 
-void help(const CONST_C_STRING arg)
-{
-    std::cout
-        << "\nglob\n\n"
-        << "usage: " << std::filesystem::path(arg).filename().string() << " [options] args\n"
-        << cOpts;
-    ;
-}
-
 INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
 {
     auto ret = 1;
-    DocOpts opts;
-    if (opts.process(cOpts, argc, argv))
+    DocOpts opts(cHelp);
+    if (opts.process(argc, argv))
     {
         if (opts.isSet('h'))
         {
-            help(argv[0]);
+            opts.help(argv[0]);
         }
         else
         {
@@ -52,10 +44,6 @@ INT32 main(const INT32 argc, const CONST_C_STRING* const argv)
             }
             Glob glob(*proc, opts.isSet('f'), opts.isSet('d'));
             glob.glob(opts.argc(), opts.args());
-            // for (auto i = 0; i < opts.argc(); ++i)
-            // {
-            //     glob.glob(opts.args()[i]);
-            // }
         }
     }
     return ret;

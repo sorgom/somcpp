@@ -1,10 +1,15 @@
 #!/bin/bash
 
-cd $(dirname $0)
+callDir=$(pwd)
 
-docopts=../build/docopts
-optsTxt=demo_options.txt
-tmpSh=../build/tmp.sh
+cd $(dirname $0)
+optsTxt=$(pwd)/demo_options.txt
+
+cd ../build
+docopts=$(pwd)/docopts
+tmpSh=$(pwd)/tmp.sh
+
+cd $callDir
 
 if [ ! -f $docopts ]; then
     echo "$docopts not found. Please build it first."
@@ -14,7 +19,7 @@ fi
 function help
 {
     rm -f $tmpSh
-    echo "Usage: $(basename $0) [options] args"
+    echo "usage: $(basename $0) [options] args"
     cat $optsTxt
     exit 0
 }
