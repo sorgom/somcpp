@@ -70,10 +70,12 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/BaseLib.o
 GENERATED += $(OBJDIR)/Glob.o
 GENERATED += $(OBJDIR)/GlobProcessors.o
 GENERATED += $(OBJDIR)/docopts.o
 GENERATED += $(OBJDIR)/globMain.o
+OBJECTS += $(OBJDIR)/BaseLib.o
 OBJECTS += $(OBJDIR)/Glob.o
 OBJECTS += $(OBJDIR)/GlobProcessors.o
 OBJECTS += $(OBJDIR)/docopts.o
@@ -142,6 +144,9 @@ endif
 # #############################################
 
 $(OBJDIR)/globMain.o: ../runtime/globMain.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/BaseLib.o: ../src/BaseLib.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Glob.o: ../src/Glob.cpp

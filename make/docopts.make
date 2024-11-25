@@ -70,9 +70,11 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/BaseLib.o
 GENERATED += $(OBJDIR)/docopts.o
 GENERATED += $(OBJDIR)/docoptsMain.o
 GENERATED += $(OBJDIR)/fio.o
+OBJECTS += $(OBJDIR)/BaseLib.o
 OBJECTS += $(OBJDIR)/docopts.o
 OBJECTS += $(OBJDIR)/docoptsMain.o
 OBJECTS += $(OBJDIR)/fio.o
@@ -140,6 +142,9 @@ endif
 # #############################################
 
 $(OBJDIR)/docoptsMain.o: ../runtime/docoptsMain.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/BaseLib.o: ../src/BaseLib.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/docopts.o: ../src/docopts.cpp

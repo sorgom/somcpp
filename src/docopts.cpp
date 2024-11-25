@@ -1,13 +1,14 @@
 #include <SOM/docopts.h>
+#include <SOM/BaseLib.h>
 #include <SOM/pyregex.h>
-#include <regex>
-#include <string>
-#include <set>
+
 #include <iostream>
+#include <regex>
+#include <set>
+#include <string>
 using
     py::repl,
     std::regex, std::string, std::cout, std::cerr;
-#include <filesystem>
 
 bool DocOpts::process(const INT32 argc, const CONST_C_STRING* const argv, const INT32 start)
 {
@@ -129,7 +130,7 @@ void DocOpts::help(CONST_C_STRING argv0) const
 {
     static const regex reHelp("ARGV0");
 
-    cout << repl(reHelp, std::filesystem::path(argv0).filename().string().c_str(), mHelp) << '\n';
+    cout << repl(reHelp, baseName(argv0), mHelp) << '\n';
 }
 
 void DocOpts::reset()

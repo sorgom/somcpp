@@ -41,13 +41,13 @@ workspace 'somcpp'
         defines { 'GLOB_LINUX', 'TRACE_ALL' }
 
     project 'docopts'
-        files { '../src/fio.cpp', '../src/docopts.cpp', '../runtime/docoptsMain.cpp' }
+        files { '../src/BaseLib.cpp', '../src/fio.cpp', '../src/docopts.cpp', '../runtime/docoptsMain.cpp' }
 
     project 'fglob'
         files { '../src/fglob.cpp', '../runtime/fglobMain.cpp' }
 
     project 'glob'
-        files { '../src/Glob.cpp', '../src/GlobProcessors.cpp', '../src/docopts.cpp', '../runtime/globMain.cpp' }
+        files { '../src/BaseLib.cpp', '../src/Glob.cpp', '../src/GlobProcessors.cpp', '../src/docopts.cpp', '../runtime/globMain.cpp' }
 
         -- project 'lab'
         -- files { '../lab/*.cpp', '../src/*.cpp' }
